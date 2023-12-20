@@ -1,0 +1,10 @@
+[Unit]
+Description=This service starts specified vpn connection.
+After=graphical-session.target
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/vpn up
+
+[Install]
+WantedBy=default.target

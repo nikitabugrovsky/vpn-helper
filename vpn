@@ -1,0 +1,63 @@
+#!/usr/bin/env sh
+
+# helper script that connects/disconnects from/to vpn via nmcli
+
+[ -z "${VPN_CONN_UUID}" ] && \
+	echo "Please define VPN_CONN_UUID environment variable prior to running the script." && \
+	exit 1
+[ -z "${VPN_CONN_DEVICE}" ] && \
+	echo "Please define VPN_CONN_DEVICE environment variable prior to running the script." && \
+	exit 1
+[ -z "${VPN_PASSWORD}" ] && \
+	echo "Please define VPN_PASSWORD environment variable prior to running the script." && \
+	exit 1
+[ -z "${VPN_PASSWORD_FILE}" ] && \
+	echo "Please define VPN_PASSWORD_FILE environment variable prior to running the script." && \
+	exit 1
+
+ACTION=$1
+
+set_password() {
+	echo "vpn.secrets.password:${VPN_PASSWORD}" > "${VPN_PASSWORD_FILE}"
+}
+
+connect_to_vpn() {
+	nmcli connection up \
+		uuid "${VPN_CONN_UUID}" \
+		ifname "${VPN_CONN_DEVICE}" \
+		passwd-file "${VPN_PASSWORD_FILE}"
+}
+
+disconnect_from_vpn() {
+	nmcli connection down \
+		uuid "${VPN_CONN_UUID}"
+}
+
+remove_password_file() {
+	rm "${VPN_PASSWORD_FILE}"
+}
+
+show_help_message() {
+	printf "vpn [up|down|help]\n"
+	printf "\tScript to bring given vpn connection up/down.\n"
+	printf "\tVPN_CONN_UUID, VPN_CONN_DEVICE, VPN_PASSWORD environment variables\n"
+	printf "\tshould be set before running the script.\n"
+}
+
+main() {
+	case "${ACTION}" in
+		"up")
+			set_password
+			connect_to_vpn
+			remove_password_file
+		;;
+		"down")
+			disconnect_from_vpn
+		;;
+		"help")
+			show_help_message
+		;;
+	esac
+}
+
+main
