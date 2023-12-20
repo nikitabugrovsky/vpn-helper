@@ -25,7 +25,7 @@ make install
 ```
 Installation does not require elevated priviledges. All components are installed into current user space & available only to a current user.
 
-# Components:
+### Components:
 
 1. `vpn` script. Uses `nmcli` & environment variables to communicate with Network Manager.
 2. `vpn.service`. Systemd oneshot unit that starts vpn connection once you are logged in.
