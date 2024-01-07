@@ -1,10 +1,11 @@
 [Unit]
-Description=This service starts specified vpn connection.
-After=graphical-session.target
+Description=This service starts specified vpn connection using user space environment variables.
 
 [Service]
 Type=oneshot
-ExecStart=%h/.local/bin/vpn up
+RemainAfterExit=true
+ExecStart=/bin/bash -cl "${HOME}/.local/bin/vpn up"
+ExecStop=/bin/bash -cl "${HOME}/.local/bin/vpn down"
 
 [Install]
 WantedBy=default.target
